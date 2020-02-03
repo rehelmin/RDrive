@@ -23,6 +23,7 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
+#include "console.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
@@ -114,6 +115,7 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
+    ConsoleProcess();
     osDelay(1);
   }
   /* USER CODE END StartDefaultTask */

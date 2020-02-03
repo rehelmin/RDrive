@@ -2,29 +2,21 @@
 // In an embedded system, this might interface to a UART driver.
 
 #include "consoleIo.h"
-#include "stm32f4xx_hal.h"
-
-static int getch_noblock() {
-    if (_kbhit())
-        return _getch();
-    else
-        return EOF;
-}
 
 eConsoleError ConsoleIoInit(void)
 {
 	return CONSOLE_SUCCESS;
 }
 
-eConsoleError ConsoleIoReceive(uint8_t *buffer, const uint32_t bufferLength, uint32_t *readlength)
+eConsoleError ConsoleIoReceive(uint8_t *buffer, const uint32_t bufferLength, uint32_t *readLength)
 {
 	uint8_t i = 0;
-	char ch;
+	unsigned char ch;
 	HAL_StatusTypeDef status;
 
 	status = HAL_UART_Receive(&huart3, &ch, 1, 0);
 
-	while (status == HAL_OK) && (i < bufferLength)
+	while (status == HAL_OK && i < bufferLength)
 	{
 		buffer[i] = (uint8_t) ch;
 		i++;

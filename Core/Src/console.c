@@ -328,9 +328,10 @@ eCommandResult_T ConsoleSendParamHexUint8(uint8_t parameterUint8)
 	return COMMAND_SUCCESS;
 }
 
+
 // The C library itoa is sometimes a complicated function and the library costs aren't worth it
 // so this is implements the parts of the function needed for console.
-static void __itoa(int in, char* outBuffer, int radix)
+char * __itoa(int in, char* outBuffer, int radix)
 {
 	bool isNegative = false;
 	int tmpIn;
@@ -361,7 +362,10 @@ static void __itoa(int in, char* outBuffer, int radix)
 	if (isNegative) {
 		*(outBuffer) = '-';
 	}
+
+	return outBuffer;
 }
+
 
 
 // ConsoleSendParamInt16

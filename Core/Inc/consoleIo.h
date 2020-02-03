@@ -4,6 +4,7 @@
 #define CONSOLE_IO_H
 
 #include <stdint.h>
+#include "stm32f4xx_hal.h"
 
 typedef enum {CONSOLE_SUCCESS = 0u, CONSOLE_ERROR = 1u } eConsoleError;
 
