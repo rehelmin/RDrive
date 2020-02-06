@@ -1,0 +1,6 @@
+power on
+connect
+r
+h
+loadbin build/rocketeer.bin, 0x08000000
+exit

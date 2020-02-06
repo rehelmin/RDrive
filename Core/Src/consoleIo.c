@@ -2,6 +2,8 @@
 // In an embedded system, this might interface to a UART driver.
 
 #include "consoleIo.h"
+#include  <errno.h>
+#include  <sys/unistd.h> // STDOUT_FILENO, STDERR_FILENO
 
 eConsoleError ConsoleIoInit(void)
 {
@@ -12,9 +14,8 @@ eConsoleError ConsoleIoReceive(uint8_t *buffer, const uint32_t bufferLength, uin
 {
 	uint8_t i = 0;
 	unsigned char ch;
-	HAL_StatusTypeDef status;
 
-	status = HAL_UART_Receive(&huart3, &ch, 1, 0);
+	HAL_StatusTypeDef status = HAL_UART_Receive(&huart3, &ch, 1, 0);
 
 	while (status == HAL_OK && i < bufferLength)
 	{
@@ -28,23 +29,18 @@ eConsoleError ConsoleIoReceive(uint8_t *buffer, const uint32_t bufferLength, uin
 
 	
 }
-/*
-eConsoleError ConsoleIoReceive(uint8_t *buffer, const uint32_t bufferLength, uint32_t *readLength)
-{
-	uint8_t i = 0;
-	char ch;
-	
-	ch = getchar();
-	while ( ( EOF != ch ) && ( i < bufferLength ) )
+
+int _write(int file, char *data, int len) {
+	if ((file != STDOUT_FILENO) && (file != STDERR_FILENO))
 	{
-		buffer[i] = (uint8_t) ch;
-		i++;
-		ch = getch_noblock();
+		errno = EBADF;
+		return CONSOLE_ERROR;
 	}
-	*readLength = i;
+
+	HAL_StatusTypeDef status = HAL_UART_Transmit(&huart3, (uint8_t*)data, len, 1000);
+
 	return CONSOLE_SUCCESS;
 }
-*/
 
 eConsoleError ConsoleIoSend(const uint8_t *buffer, const uint32_t bufferLength, uint32_t *sentLength)
 {

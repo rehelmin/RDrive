@@ -10,6 +10,9 @@
 #   2015-07-22 - first version
 # ------------------------------------------------
 
+
+SEGGER := JLinkExe 
+
 ######################################
 # target
 ######################################
@@ -207,7 +210,10 @@ $(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
 	$(BIN) $< $@	
 	
 $(BUILD_DIR):
-	mkdir $@		
+	mkdir $@	
+
+flash: all
+	$(SEGGER) -device STM32F405RG -if SWD -speed 4000 -CommandFile flash.jlink 	
 
 #######################################
 # clean up

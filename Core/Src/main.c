@@ -27,6 +27,7 @@
 #include "usart.h"
 #include "usb_otg.h"
 #include "gpio.h"
+#include "console.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -101,6 +102,7 @@ int main(void)
   MX_USART3_UART_Init();
   MX_USB_OTG_FS_HCD_Init();
   /* USER CODE BEGIN 2 */
+  ConsoleInit();
 
   /* USER CODE END 2 */
   /* Init scheduler */
