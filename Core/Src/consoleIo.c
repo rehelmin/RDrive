@@ -4,6 +4,7 @@
 #include "consoleIo.h"
 #include  <errno.h>
 #include  <sys/unistd.h> // STDOUT_FILENO, STDERR_FILENO
+#include <stdio.h>
 
 eConsoleError ConsoleIoInit(void)
 {
@@ -30,6 +31,7 @@ eConsoleError ConsoleIoReceive(uint8_t *buffer, const uint32_t bufferLength, uin
 	
 }
 
+/*
 int _write(int file, char *data, int len) {
 	if ((file != STDOUT_FILENO) && (file != STDERR_FILENO))
 	{
@@ -41,6 +43,7 @@ int _write(int file, char *data, int len) {
 
 	return CONSOLE_SUCCESS;
 }
+*/
 
 eConsoleError ConsoleIoSend(const uint8_t *buffer, const uint32_t bufferLength, uint32_t *sentLength)
 {

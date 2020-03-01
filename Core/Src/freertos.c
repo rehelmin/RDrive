@@ -24,6 +24,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "console.h"
+#include "can.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
@@ -57,12 +58,22 @@ const osThreadAttr_t defaultTask_attributes = {
   .stack_size = 128
 };
 
+osThreadId_t defaultTaskHandle;
+const osThreadAttr_t communicationTask_attributes = {
+  .name = "communicationTask",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 128
+};
+
+osThreadId_t communicationTaskHandle;
+
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
    
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
+void StartCommunicationTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -97,7 +108,7 @@ void MX_FREERTOS_Init(void) {
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
+  communicationTaskHandle = osThreadNew(StartCommunicationTask, NULL, &communicationTask_attributes);
   /* USER CODE END RTOS_THREADS */
 
 }
@@ -115,7 +126,7 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    //ConsoleProcess();
+    ConsoleProcess();
     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
     osDelay(50);
   }
@@ -124,7 +135,17 @@ void StartDefaultTask(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-     
+void StartCommunicationTask(void *argument)
+{
+
+  /* Infinite loop */
+  for(;;)
+  {
+    CanProcess();
+    osDelay(10);
+  }
+  /* USER CODE END StartDefaultTask */
+}     
 /* USER CODE END Application */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

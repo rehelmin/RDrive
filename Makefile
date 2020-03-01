@@ -45,6 +45,7 @@ Core/Src/freertos.c \
 Core/Src/i2c.c \
 Core/Src/sdio.c \
 Core/Src/spi.c \
+Core/Src/can.c \
 Core/Src/usart.c \
 Core/Src/usb_otg.c \
 Core/Src/stm32f4xx_it.c \
@@ -72,6 +73,7 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_sdmmc.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sd.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_can.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_hcd.c \
@@ -86,11 +88,30 @@ Middlewares/Third_Party/FreeRTOS/Source/tasks.c \
 Middlewares/Third_Party/FreeRTOS/Source/timers.c \
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c \
 Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c \
-Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c
+Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c \
+Core/Src/SEGGER/SEGGER_RTT.c \
+Core/Src/SEGGER/SEGGER_RTT_printf.c \
+Core/Src/SEGGER/SEGGER_RTT_Syscalls_GCC.c \
+Core/Src/SEGGER/SEGGER_SYSVIEW.c \
+Core/Src/SEGGER/SEGGER_SYSVIEW_FreeRTOS.c \
+Core/Src/SEGGER/Config/SEGGER_SYSVIEW_Config_FreeRTOS.c \
+Core/Src/communication/CANopen.c \
+Core/Src/communication/CO_driver.c \
+Core/Src/communication/CO_Emergency.c \
+Core/Src/communication/CO_HBconsumer.c \
+Core/Src/communication/CO_NMT_Heartbeat.c \
+Core/Src/communication/CO_OD.c \
+Core/Src/communication/CO_PDO.c \
+Core/Src/communication/CO_SDO.c \
+Core/Src/communication/CO_SDOmaster.c \
+Core/Src/communication/CO_SYNC.c \
+Core/Src/communication/CO_trace.c \
+Core/Src/communication/crc16-ccitt.c \
 
 # ASM sources
 ASM_SOURCES =  \
-startup_stm32f405xx.s
+startup_stm32f405xx.s \
+Core/Src/SEGGER/SEGGER_RTT_ASM_ARMv7M.s
 
 
 #######################################
@@ -151,7 +172,8 @@ C_INCLUDES =  \
 -IMiddlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 \
 -IMiddlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F \
 -IDrivers/CMSIS/Device/ST/STM32F4xx/Include \
--IDrivers/CMSIS/Include 
+-IDrivers/CMSIS/Include \
+-ICore/Inc/communication
 
 
 # compile gcc flags

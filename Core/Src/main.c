@@ -22,12 +22,14 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "i2c.h"
+#include "can.h"
 #include "sdio.h"
 #include "spi.h"
 #include "usart.h"
 #include "usb_otg.h"
 #include "gpio.h"
 #include "console.h"
+#include <CANopen.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -97,6 +99,7 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_SDIO_SD_Init();
+  MX_CAN1_Init();
   MX_SPI1_Init();
   MX_SPI2_Init();
   MX_USART3_UART_Init();
@@ -104,9 +107,14 @@ int main(void)
   /* USER CODE BEGIN 2 */
   ConsoleInit();
 
+  CO_init(0, 0x10, 1000);
+
   /* USER CODE END 2 */
   /* Init scheduler */
   osKernelInitialize();
+
+  /* Initialize Systemview */
+  SEGGER_SYSVIEW_Conf();
  
   /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init(); 
