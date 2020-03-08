@@ -56,3 +56,7 @@ dkms.conf
 # Sublime Text Files
 *.sublime-workspace
 *.sublime-project
+
+# Soon to remove files
+*.bak
+*.orig

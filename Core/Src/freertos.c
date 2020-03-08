@@ -26,54 +26,48 @@
 #include "console.h"
 #include "can.h"
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */     
+uint8_t ucHeap[configTOTAL_HEAP_SIZE] __attribute__((section("ccmram")));
 
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
-/* USER CODE BEGIN Variables */
-
-/* USER CODE END Variables */
 /* Definitions for defaultTask */
-osThreadId_t defaultTaskHandle;
+osThreadId_t consoleTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
-  .name = "defaultTask",
+  .name = "consoleTask",
   .priority = (osPriority_t) osPriorityNormal,
   .stack_size = 128
 };
 
-osThreadId_t defaultTaskHandle;
+osThreadId_t communicationTaskHandle;
 const osThreadAttr_t communicationTask_attributes = {
   .name = "communicationTask",
   .priority = (osPriority_t) osPriorityNormal,
   .stack_size = 128
 };
 
-osThreadId_t communicationTaskHandle;
+osThreadId_t motionTaskHandle;
+const osThreadAttr_t motionTask_attributes = {
+  .name = "motionTask",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 128
+};
+
+osThreadId_t controllerTaskHandle;
+const osThreadAttr_t controllerTask_attributes = {
+  .name = "controllerTask",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 128
+};
+
+
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
    
 /* USER CODE END FunctionPrototypes */
 
-void StartDefaultTask(void *argument);
+void StartConsoleTask(void *argument);
 void StartCommunicationTask(void *argument);
+void StartMotionTask(void *argument);
+void StartControllerTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -105,22 +99,22 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* creation of defaultTask */
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
-
-  /* USER CODE BEGIN RTOS_THREADS */
+  consoleTaskHandle = osThreadNew(StartConsoleTask, NULL, &defaultTask_attributes);
   communicationTaskHandle = osThreadNew(StartCommunicationTask, NULL, &communicationTask_attributes);
-  /* USER CODE END RTOS_THREADS */
+  motionTaskHandle = osThreadNew(StartMotionTask, NULL, &motionTask_attributes);
+  controllerTaskHandle = osThreadNew(StartControllerTask, NULL, &controllerTask_attributes);
+
 
 }
 
-/* USER CODE BEGIN Header_StartDefaultTask */
+/* USER CODE BEGIN Header_StartConsoleTask */
 /**
   * @brief  Function implementing the defaultTask thread.
   * @param  argument: Not used 
   * @retval None
   */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument)
+/* USER CODE END Header_StartConsoleTask */
+void StartConsoleTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
@@ -129,6 +123,7 @@ void StartDefaultTask(void *argument)
     ConsoleProcess();
     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
     osDelay(50);
+    SEGGER_SYSVIEW_Print("Console Task\n");
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -144,8 +139,29 @@ void StartCommunicationTask(void *argument)
     CanProcess();
     osDelay(10);
   }
+}
+
+void StartMotionTask(void *argument)
+{
+
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1000);
+  }
   /* USER CODE END StartDefaultTask */
-}     
+}
+
+void StartControllerTask(void *argument)
+{
+
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1000);
+  }
+  /* USER CODE END StartDefaultTask */
+}   
 /* USER CODE END Application */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
