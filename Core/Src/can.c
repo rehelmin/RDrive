@@ -52,12 +52,14 @@
 #include <CANopen.h>
 
 #include "gpio.h"
+#include "tim.h"
 
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
 
 CAN_HandleTypeDef hcan1;
+
 
 /* CAN1 init function */
 void MX_CAN1_Init(void)
@@ -84,11 +86,13 @@ void MX_CAN1_Init(void)
 
 void CanProcess(void)
 {
-  static uint32_t CO_timer1msprevious;
+  volatile uint32_t CO_timer1msprevious;
+  volatile uint32_t CO_timer1usprevious;
+
   volatile uint32_t timer1msCopy;
+  volatile uint32_t timer1usCopy;
   volatile uint16_t timer1msDiff;
-  //volatile uint32_t timer1usCopy;
-  //volatile uint32_t timer1usDiff;
+  volatile uint32_t timer1usDiff;
 
   timer1msCopy = HAL_GetTick();
   timer1msDiff = timer1msCopy - CO_timer1msprevious;
@@ -99,21 +103,19 @@ void CanProcess(void)
       CO_process(CO, timer1msDiff, NULL);
   }
 
-    /*
-    
-    timer1usCopy = htim6.Instance->CNT;
-    if (timer1usCopy >= CO_timer1usprevious) {
-        timer1usDiff = timer1usCopy - CO_timer1usprevious;
-    } 
-    else {
-        // handle the rollover situation
-        timer1usDiff = timer1usCopy + (htim6.Init.Period - CO_timer1usprevious);
-    }
-    CO_timer1usprevious = timer1usCopy;
-    // the frequency of this call assumes we are running in a CAN slave context
-    CO_process_SYNC_RPDO(CO, timer1usDiff);
+  timer1usCopy = CAN_GetTick();
+  if (timer1usCopy >= CO_timer1usprevious) {
+      timer1usDiff = timer1usCopy - CO_timer1usprevious;
+  } 
+  //else {
+      // handle the rollover situation
+  //    timer1usDiff = timer1usCopy + (htim6.Init.Period - CO_timer1usprevious);
+  //}
+  CO_timer1usprevious = timer1usCopy;
+  // the frequency of this call assumes we are running in a CANopen slave context
+  CO_process_SYNC_RPDO(CO, timer1usDiff);
 
-    */
+  
     
 }
 

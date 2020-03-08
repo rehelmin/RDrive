@@ -46,6 +46,7 @@ Core/Src/i2c.c \
 Core/Src/sdio.c \
 Core/Src/spi.c \
 Core/Src/can.c \
+Core/Src/tim.c \
 Core/Src/usart.c \
 Core/Src/usb_otg.c \
 Core/Src/stm32f4xx_it.c \
@@ -242,7 +243,7 @@ flash: all
 #######################################
 clean:
 	-rm -fR $(BUILD_DIR)
-  
+
 #######################################
 # dependencies
 #######################################

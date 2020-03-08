@@ -59,6 +59,7 @@
 
 /* External variables --------------------------------------------------------*/
 extern TIM_HandleTypeDef htim14;
+extern TIM_HandleTypeDef htim7;
 
 /* USER CODE BEGIN EV */
 
@@ -175,6 +176,11 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
+
+void TIM7_IRQHandler(void)
+{
+  HAL_TIM_IRQHandler(&htim7);
+}
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
