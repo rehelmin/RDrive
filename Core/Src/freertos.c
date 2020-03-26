@@ -25,6 +25,7 @@
 #include "cmsis_os.h"
 #include "console.h"
 #include "can.h"
+#include "queue.h"
 
 uint8_t ucHeap[configTOTAL_HEAP_SIZE] __attribute__((section("ccmram")));
 
@@ -57,12 +58,11 @@ const osThreadAttr_t controllerTask_attributes = {
   .stack_size = 128
 };
 
+QueueHandle_t consoleQueue;
+QueueHandle_t controllerQueue;
+QueueHandle_t motionQueue;
+QueueHandle_t communicationsQueue;
 
-
-/* Private function prototypes -----------------------------------------------*/
-/* USER CODE BEGIN FunctionPrototypes */
-   
-/* USER CODE END FunctionPrototypes */
 
 void StartConsoleTask(void *argument);
 void StartCommunicationTask(void *argument);
@@ -94,7 +94,12 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
+  consoleQueue = xQueueCreate(CONSOLE_QUEUE_MAX_LENGTH, sizeof(char));
+  if (consoleQueue == NULL) while(1);
+
+  controllerQueue = xQueueCreate(1, sizeof(uint32_t));
+  if (controllerQueue == NULL) while(1);
+
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */

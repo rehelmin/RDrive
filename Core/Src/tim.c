@@ -49,12 +49,11 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "tim.h"
-
 #include "gpio.h"
 
 /* USER CODE BEGIN 0 */
 
-volatile uint32_t canTick;
+volatile uint32_t canTick = 0;
 
 void CAN_IncTick(void)
 {
@@ -425,10 +424,10 @@ HAL_StatusTypeDef MX_TIM7_Init(void)
   uint32_t              pFLatency;
   
   /*Configure the TIM7 IRQ priority */
-  HAL_NVIC_SetPriority(TIM7_IRQn, 15 ,0); 
+  /* HAL_NVIC_SetPriority(TIM7_IRQn, 15 ,0); */
   
   /* Enable the TIM7 global Interrupt */
-  HAL_NVIC_EnableIRQ(TIM7_IRQn); 
+  /* HAL_NVIC_EnableIRQ(TIM7_IRQn); */
   
   /* Enable TIM7 clock */
   __HAL_RCC_TIM7_CLK_ENABLE();
@@ -439,8 +438,8 @@ HAL_StatusTypeDef MX_TIM7_Init(void)
   /* Compute TIM7 clock */
   uwTimclock = 2*HAL_RCC_GetPCLK1Freq();
    
-  /* Compute the prescaler value to have TIM6 counter clock equal to 10.5MHz */
-  uwPrescalerValue = (uint32_t) ((uwTimclock / 5000000) - 1);
+  /* Compute the prescaler value to have TIM6 counter clock equal to 1MHz */
+  uwPrescalerValue = (uint32_t) ((uwTimclock / 1000000) - 1);
   
   /* Initialize TIM7 */
   htim7.Instance = TIM7;
@@ -451,14 +450,14 @@ HAL_StatusTypeDef MX_TIM7_Init(void)
   + ClockDivision = 0
   + Counter direction = Up
   */
-  htim7.Init.Period = 5 - 1;
+  htim7.Init.Period = 0xFFFF;
   htim7.Init.Prescaler = uwPrescalerValue;
   htim7.Init.ClockDivision = 0;
   htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
   if(HAL_TIM_Base_Init(&htim7) == HAL_OK)
   {
     /* Start the TIM time Base generation in interrupt mode */
-    return HAL_TIM_Base_Start_IT(&htim7);
+    return HAL_TIM_Base_Start(&htim7);
   }
   
   /* Return function status */
@@ -537,7 +536,7 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef* tim_pwmHandle)
 void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef* tim_encoderHandle)
 {
 
-  GPIO_InitTypeDef GPIO_InitStruct;
+  /* GPIO_InitTypeDef GPIO_InitStruct; */
   if(tim_encoderHandle->Instance==TIM3)
   {
   /* USER CODE BEGIN TIM3_MspInit 0 */
@@ -589,7 +588,7 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef* tim_encoderHandle)
 void HAL_TIM_IC_MspInit(TIM_HandleTypeDef* tim_icHandle)
 {
 
-  GPIO_InitTypeDef GPIO_InitStruct;
+  /* GPIO_InitTypeDef GPIO_InitStruct; */
   if(tim_icHandle->Instance==TIM5)
   {
   /* USER CODE BEGIN TIM5_MspInit 0 */
@@ -620,7 +619,7 @@ void HAL_TIM_IC_MspInit(TIM_HandleTypeDef* tim_icHandle)
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle)
 {
 
-  GPIO_InitTypeDef GPIO_InitStruct;
+  /* GPIO_InitTypeDef GPIO_InitStruct; */
   if(timHandle->Instance==TIM1)
   {
   /* USER CODE BEGIN TIM1_MspPostInit 0 */

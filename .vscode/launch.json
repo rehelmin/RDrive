@@ -1,0 +1,38 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // For the Cortex-Debug extension
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "jlink",
+            "device": "STM32F405RG",
+            "interface": "swd",
+            "name": "Debug ODrive",
+            "executable": "${workspaceRoot}/build/rocketeer.elf",
+            "configFiles": [
+                "interface/stlink-v2.cfg",
+                "target/stm32f4x.cfg"
+            ],
+            "svdFile": "${workspaceRoot}/STM32F405.svd",
+            "cwd": "${workspaceRoot}"
+        },
+        {
+            // For the Cortex-Debug extension
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "request": "launch",
+            "name": "Debug ODrive - FreeRTOS",
+            "executable": "${workspaceRoot}/build/rocketeer.elf",
+            "rtos": "FreeRTOS",
+            "configFiles": [
+                "interface/stlink-v2.cfg",
+                "target/stm32f4x.cfg",
+            ],
+            "cwd": "${workspaceRoot}"
+        }
+    ]
+}

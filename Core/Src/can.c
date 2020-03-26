@@ -86,8 +86,8 @@ void MX_CAN1_Init(void)
 
 void CanProcess(void)
 {
-  volatile uint32_t CO_timer1msprevious;
-  volatile uint32_t CO_timer1usprevious;
+  static volatile uint32_t CO_timer1msprevious;
+  static volatile uint32_t CO_timer1usprevious;
 
   volatile uint32_t timer1msCopy;
   volatile uint32_t timer1usCopy;
@@ -98,14 +98,17 @@ void CanProcess(void)
   timer1msDiff = timer1msCopy - CO_timer1msprevious;
   CO_timer1msprevious = timer1msCopy;
 
+  timer1usCopy = htim7.Instance->CNT;
+  timer1usDiff = timer1usCopy - CO_timer1usprevious;
+  CO_timer1usprevious = timer1usCopy;
+
   uint32_t status = HAL_CAN_GetError(&hcan1);
   if (status == HAL_CAN_ERROR_NONE) {
       CO_process(CO, timer1msDiff, NULL);
   }
 
-  timer1usCopy = CAN_GetTick();
   if (timer1usCopy >= CO_timer1usprevious) {
-      timer1usDiff = timer1usCopy - CO_timer1usprevious;
+    timer1usDiff = timer1usCopy - CO_timer1usprevious;
   } 
   //else {
       // handle the rollover situation

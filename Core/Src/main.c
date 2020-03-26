@@ -103,14 +103,14 @@ int main(void)
   MX_CAN1_Init();
   MX_SPI1_Init();
   MX_SPI2_Init();
+  MX_TIM7_Init();
   MX_USART3_UART_Init();
   MX_USB_OTG_FS_HCD_Init();
-  /* USER CODE BEGIN 2 */
-  ConsoleInit();
 
+  ConsoleInit();
   CO_init(0, 0x10, 1000);
 
-  /* USER CODE END 2 */
+
   /* Init scheduler */
   osKernelInitialize();
 
