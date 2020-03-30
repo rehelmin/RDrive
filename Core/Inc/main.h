@@ -30,6 +30,7 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 #include "dataDefs.h"
+#include "controller.h"
 
 #define CONSOLE_QUEUE_MAX_LENGTH  256
 
@@ -39,9 +40,15 @@ void Error_Handler(void);
 
 typedef struct
 {
-  ControllerMessageID_t eDataID;
-  int32_t lDataValue;
+  eControllerState eDataID;
 } ControllerData_t;
+
+typedef struct
+{
+  ConsoleMessageID_t eDataID;
+  ConsoleMessageSource_t eDataSource;
+  char messageBuffer[128];
+} ConsoleData_t;
 
 #ifdef __cplusplus
 }

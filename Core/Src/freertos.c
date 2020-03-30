@@ -26,6 +26,8 @@
 #include "console.h"
 #include "can.h"
 #include "queue.h"
+#include "timers.h"
+#include "controller.h"
 
 uint8_t ucHeap[configTOTAL_HEAP_SIZE] __attribute__((section("ccmram")));
 
@@ -58,6 +60,8 @@ const osThreadAttr_t controllerTask_attributes = {
   .stack_size = 128
 };
 
+TimerHandle_t ledTimer;
+
 QueueHandle_t consoleQueue;
 QueueHandle_t controllerQueue;
 QueueHandle_t motionQueue;
@@ -89,25 +93,21 @@ void MX_FREERTOS_Init(void) {
   /* add semaphores, ... */
   /* USER CODE END RTOS_SEMAPHORES */
 
-  /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
+  /* Blink Timer */
+  ledTimer = xTimerCreate("ledBlinkTimer", TIMER_INIT_TICKS, pdTRUE, 0, controllerBlinkLedCallback);
 
-  /* USER CODE BEGIN RTOS_QUEUES */
+  /* Messaging Queues */
   consoleQueue = xQueueCreate(CONSOLE_QUEUE_MAX_LENGTH, sizeof(char));
-  if (consoleQueue == NULL) while(1);
-
-  controllerQueue = xQueueCreate(1, sizeof(uint32_t));
-  if (controllerQueue == NULL) while(1);
+  controllerQueue = xQueueCreate(1, sizeof(ControllerData_t));
 
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
   /* creation of defaultTask */
-  consoleTaskHandle = osThreadNew(StartConsoleTask, NULL, &defaultTask_attributes);
+  consoleTaskHandle = osThreadNew(StartConsoleTask, (void*)consoleQueue, &defaultTask_attributes);
   communicationTaskHandle = osThreadNew(StartCommunicationTask, NULL, &communicationTask_attributes);
   motionTaskHandle = osThreadNew(StartMotionTask, NULL, &motionTask_attributes);
-  controllerTaskHandle = osThreadNew(StartControllerTask, NULL, &controllerTask_attributes);
+  controllerTaskHandle = osThreadNew(StartControllerTask, (void*)controllerQueue, &controllerTask_attributes);
 
 
 }
@@ -123,10 +123,11 @@ void StartConsoleTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
+  ConsoleInit();
+
   for(;;)
   {
     ConsoleProcess();
-    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
     osDelay(50);
     SEGGER_SYSVIEW_Print("Console Task\n");
   }
@@ -159,10 +160,14 @@ void StartMotionTask(void *argument)
 
 void StartControllerTask(void *argument)
 {
+  xTimerStart( ledTimer, 0 );
+  struct state state = { handleStartup, 0 };
 
   /* Infinite loop */
   for(;;)
   {
+    controllerProcess();
+    state.next(&state);
     osDelay(1000);
   }
   /* USER CODE END StartDefaultTask */
