@@ -11,6 +11,9 @@
 #include "console.h"
 #include "consoleIo.h"
 #include "version.h"
+#include "FreeRTOS.h"
+#include "queue.h"
+#include "main.h"
 
 #define IGNORE_UNUSED_VARIABLE(x)     if ( &x == &x ) {}
 
@@ -19,6 +22,7 @@ static eCommandResult_T ConsoleCommandVer(const char buffer[]);
 static eCommandResult_T ConsoleCommandHelp(const char buffer[]);
 static eCommandResult_T ConsoleCommandParamExampleInt16(const char buffer[]);
 static eCommandResult_T ConsoleCommandParamExampleHexUint16(const char buffer[]);
+static eCommandResult_T ConsoleCommandReqState(const char buffer[]);
 
 static const sConsoleCommandTable_T mConsoleCommandTable[] =
 {
@@ -27,6 +31,7 @@ static const sConsoleCommandTable_T mConsoleCommandTable[] =
     {"ver", &ConsoleCommandVer, HELP("Get the version string")},
     {"int", &ConsoleCommandParamExampleInt16, HELP("How to get a signed int16 from params list: int -321")},
     {"u16h", &ConsoleCommandParamExampleHexUint16, HELP("How to get a hex u16 from the params list: u16h aB12")},
+    {"req-state", &ConsoleCommandReqState, HELP("Request a controller state change")},
 
 	CONSOLE_COMMAND_TABLE_END // must be LAST
 };
@@ -85,6 +90,25 @@ static eCommandResult_T ConsoleCommandParamExampleHexUint16(const char buffer[])
 		ConsoleIoSendString("Parameter is 0x");
 		ConsoleSendParamHexUint16(parameterUint16);
 		ConsoleIoSendString(STR_ENDLINE);
+	}
+	return result;
+}
+
+static eCommandResult_T ConsoleCommandReqState(const char buffer[])
+{
+	ControllerData_t controllerData;
+	uint32_t sendStatus;
+	eCommandResult_T result;
+	result = ConsoleReceiveParamHexUint32(buffer, 1, &controllerData.event);
+	if ( COMMAND_SUCCESS == result )
+	{
+		ConsoleIoSendString("Requesting State: 0x");
+		ConsoleSendParamHexUint32(controllerData.event);
+		ConsoleIoSendString(STR_ENDLINE);
+
+		sendStatus = xQueueSend(controllerQueue, (void *) &controllerData, (TickType_t) 0 );
+
+
 	}
 	return result;
 }

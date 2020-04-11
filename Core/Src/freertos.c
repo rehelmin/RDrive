@@ -25,7 +25,6 @@
 #include "cmsis_os.h"
 #include "console.h"
 #include "can.h"
-#include "queue.h"
 #include "timers.h"
 #include "controller.h"
 
@@ -36,7 +35,7 @@ osThreadId_t consoleTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "consoleTask",
   .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 128
+  .stack_size = 512
 };
 
 osThreadId_t communicationTaskHandle;
@@ -62,11 +61,7 @@ const osThreadAttr_t controllerTask_attributes = {
 
 TimerHandle_t ledTimer;
 
-QueueHandle_t consoleQueue;
-QueueHandle_t controllerQueue;
-QueueHandle_t motionQueue;
-QueueHandle_t communicationsQueue;
-
+state_function controllerHandleStartup;   // initial controller state forward declaration
 
 void StartConsoleTask(void *argument);
 void StartCommunicationTask(void *argument);
@@ -97,10 +92,8 @@ void MX_FREERTOS_Init(void) {
   ledTimer = xTimerCreate("ledBlinkTimer", TIMER_INIT_TICKS, pdTRUE, 0, controllerBlinkLedCallback);
 
   /* Messaging Queues */
-  consoleQueue = xQueueCreate(CONSOLE_QUEUE_MAX_LENGTH, sizeof(char));
-  controllerQueue = xQueueCreate(1, sizeof(ControllerData_t));
-
-  /* USER CODE END RTOS_QUEUES */
+  consoleQueue = xQueueCreate(1, sizeof(ConsoleData_t));
+  controllerQueue = xQueueCreate(4, sizeof(ControllerData_t));
 
   /* Create the thread(s) */
   /* creation of defaultTask */
@@ -121,17 +114,13 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartConsoleTask */
 void StartConsoleTask(void *argument)
 {
-  /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
-  ConsoleInit();
 
   for(;;)
   {
     ConsoleProcess();
     osDelay(50);
-    SEGGER_SYSVIEW_Print("Console Task\n");
   }
-  /* USER CODE END StartDefaultTask */
 }
 
 /* Private application code --------------------------------------------------*/
@@ -143,7 +132,7 @@ void StartCommunicationTask(void *argument)
   for(;;)
   {
     CanProcess();
-    osDelay(10);
+    osDelay(50);
   }
 }
 
@@ -155,23 +144,19 @@ void StartMotionTask(void *argument)
   {
     osDelay(1000);
   }
-  /* USER CODE END StartDefaultTask */
 }
 
 void StartControllerTask(void *argument)
 {
   xTimerStart( ledTimer, 0 );
-  struct state state = { handleStartup, 0 };
+  struct state state = { controllerHandleStartup, 0 };
 
   /* Infinite loop */
   for(;;)
   {
-    controllerProcess();
-    state.next(&state);
-    osDelay(1000);
+    controllerProcess(&state);
+    osDelay(50);
   }
-  /* USER CODE END StartDefaultTask */
-}   
-/* USER CODE END Application */
+}
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

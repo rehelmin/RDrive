@@ -6,61 +6,46 @@
 
 #include "FreeRTOS.h"
 #include "timers.h"
-
-/*
-static const uint32_t STATE_BLINK_PERIOD_TICKS = 1000;
-static const uint32_t RESET_BLINK_PERIOD_TICKS = 40;
-static const uint32_t NUMBER_RESET_BLINKS = 10;
-*/
+#include "dataDefs.h"
 
 #define STATE_BLINK_PERIOD_TICKS	500
 #define RESET_BLINK_PERIOD_TICKS	40
 #define NUMBER_RESET_BLINKS			10
 #define TIMER_INIT_TICKS			40
 
-typedef enum {
-	kStartupState = 1,
-	kNotReadyToSwitchOnState = 2,
-	kSwitchOnDisabledState = 3,
-	kReadytoSwitchOnState = 4,
-	kSwitchedOnState = 5,
-	kOperationEnabledState = 6,
-	kQuickStopActiveState = 7,
-	kFaultReactionState = 8,
-	kFaultState = 9,
-	kLastState = 10
-} eControllerState;
-
-struct sStateTableEntry {
-	eControllerState gotoNotReadytoSwitchOnEvent;
-	eControllerState gotoSwitchOnDisabledEvent;
-	eControllerState gotoReadyEvent;
-	eControllerState gotoOnEvent;
-	eControllerState gotoOperationEnabledEvent;
-	eControllerState FaultEvent;
-	eControllerState DisableEvent;
-	eControllerState ResetEvent;
-};
+// called from lower down areas of the code (controller)
+typedef enum { 
+	CONTROLLER_SUCCESS = 0u,
+	CONTROLLER_PARAMETER_ERROR = 0x10u,
+	CONTROLLER_PARAMETER_END   = 0x11u,
+	CONTROLLER_ERROR =0xFFu 
+} eControllerResult_t;
 
 struct state;
-typedef void state_function(struct state *);
+typedef eControllerResult_t state_function(struct state *);
 
 struct state {
 	state_function * next;
-	uint32_t i;
+	uint32_t eventId;
 };
 
-state_function handleStartup;
-state_function handleNotReadyToSwitchOn;
-state_function handleSwitchOnDisabled;
-state_function handleReadyToSwitchOn;
-state_function handleSwitchedOn;
-state_function handleOperationEnabled;
-state_function handleFaultReaction;
-state_function handleFault;
 
 void controllerBlinkLedCallback(TimerHandle_t xTimer);
-void controllerProcess(void);
+void controllerProcess(struct state * state);
+
+typedef eControllerResult_t(*ControllerState_t)(struct state *);
+
+typedef struct sControllerStateStruct
+{
+    const uint32_t state;
+    ControllerState_t execute;
+} sControllerStateTable_t;
+
+#define CONTROLLER_STATE_TABLE_END {NULL, NULL}
+
+const sControllerStateTable_t* ControllerStateGetTable(void);
+
+uint32_t controllerCurrentState;
 
 #ifdef __cplusplus
 }

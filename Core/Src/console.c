@@ -283,6 +283,43 @@ eCommandResult_T ConsoleReceiveParamHexUint16(const char * buffer, const uint8_t
 	return result;
 }
 
+// ConsoleReceiveParamHexUint32
+// Identify and obtain a parameter of type uint32, sent in as hex. This parses the number and does not use
+// a library function to do it.
+eCommandResult_T ConsoleReceiveParamHexUint32(const char * buffer, const uint8_t parameterNumber, uint32_t* parameterUint32)
+{
+	uint32_t startIndex = 0;
+	uint32_t value = 0;
+	uint32_t i;
+	eCommandResult_T result;
+	uint8_t tmpUint8;
+
+	result = ConsoleParamFindN(buffer, parameterNumber, &startIndex);
+	if ( COMMAND_SUCCESS == result )
+	{
+		// bufferIndex points to start of integer
+		// next separator or newline or NULL indicates end of parameter
+		for ( i = 0u ; i < 8u ; i ++)   // U32 must be less than 8 hex digits: 0xFFFFFFFF
+		{
+			if ( COMMAND_SUCCESS == result )
+			{
+				result = ConsoleUtilHexCharToInt(buffer[startIndex + i], &tmpUint8);
+			}
+			if ( COMMAND_SUCCESS == result )
+			{
+				value = (value << 4u);
+				value += tmpUint8;
+			}
+		}
+		if  ( COMMAND_PARAMETER_END == result )
+		{
+			result = COMMAND_SUCCESS;
+		}
+		*parameterUint32 = value;
+	}
+	return result;
+}
+
 // ConsoleSendParamHexUint16
 // Send a parameter of type uint16 as hex.
 // This does not use a library function to do it (though you could
@@ -299,6 +336,31 @@ eCommandResult_T ConsoleSendParamHexUint16(uint16_t parameterUint16)
 		if ( COMMAND_SUCCESS == result )
 		{
 			tmpUint8 = ( parameterUint16 >> (12u - (i*4u)) & 0xF);
+			result = ConsoleUtilsIntToHexChar(tmpUint8, &(out[i]));
+		}
+	}
+	out[i] = NULL_CHAR;
+	ConsoleIoSendString(out);
+
+	return COMMAND_SUCCESS;
+}
+
+// ConsoleSendParamHexUint32
+// Send a parameter of type uint32 as hex.
+// This does not use a library function to do it (though you could
+// do itoa (parameterUint32, out, 32);  instead of building it up
+eCommandResult_T ConsoleSendParamHexUint32(uint16_t parameterUint32)
+{
+	uint32_t i;
+	char out[8u + 1u];  // U16 must be less than 8 hex digits: 0xFFFFFFFF, end buffer with a NULL
+	eCommandResult_T result = COMMAND_SUCCESS;
+	uint8_t tmpUint8;
+
+	for ( i = 0u ; i < 8u ; i ++)   // U32 must be less than 4 hex digits: 0xFFFF
+	{
+		if ( COMMAND_SUCCESS == result )
+		{
+			tmpUint8 = ( parameterUint32 >> (28u - (i*4u)) & 0xF);
 			result = ConsoleUtilsIntToHexChar(tmpUint8, &(out[i]));
 		}
 	}

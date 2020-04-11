@@ -1,7 +1,23 @@
 #include "main.h"
 #include "controller.h"
 
-uint32_t controllerCurrentState = 0;
+state_function controllerHandleStartup;
+state_function controllerHandleNotReadyToSwitchOn;
+state_function controllerHandleSwitchOnDisabled;
+state_function controllerHandleReadyToSwitchOn;
+state_function controllerHandleSwitchedOn;
+state_function controllerHandleOperationEnabled;
+state_function controllerHandleFaultReaction;
+state_function controllerHandleFault;
+
+static const sControllerStateTable_t mControllerStateTable[] =
+{
+	{1, &controllerHandleStartup},
+	{2, &controllerHandleNotReadyToSwitchOn},
+	{3, &controllerHandleSwitchOnDisabled},
+
+	CONTROLLER_STATE_TABLE_END // must be LAST
+};
 
 void controllerBlinkLedCallback( TimerHandle_t xTimer )
 {
@@ -29,23 +45,56 @@ void controllerBlinkLedCallback( TimerHandle_t xTimer )
 
 }
 
-void controllerProcess(void)
+void controllerProcess(struct state * state)
 {
-	struct state state = { handleStartup, 0 };
+	uint32_t receiveStatus;
+	ControllerData_t receiveData;
+
+	receiveStatus = xQueueReceive(controllerQueue, &receiveData, 50);
+    if (receiveStatus == pdPASS) {
+    	state->eventId = receiveData.event;
+    }
+
+	state->next(state); 
 
 }
 
-void handleStartup(struct state * state)
+eControllerResult_t controllerHandleStartup(struct state * state)
 {
 	controllerCurrentState = kStartupState;
+	//ConsoleData_t data;
+	//data.messageBuffer = "Starting up...";
 
-	state->next = handleNotReadyToSwitchOn;
+	//xQueueSend(consoleQueue, &data, 10);
+
+	state->next = controllerHandleNotReadyToSwitchOn;
+
+	return CONTROLLER_SUCCESS;
 }
 
-void handleNotReadyToSwitchOn(struct state * state)
+eControllerResult_t controllerHandleNotReadyToSwitchOn(struct state * state)
 {
 	controllerCurrentState = kNotReadyToSwitchOnState;
 
-	state->next = handleNotReadyToSwitchOn;
+	if (kReqSwitchOnDisabled == state->eventId)
+	{
+		state->next = controllerHandleSwitchOnDisabled;
+	}
+	else
+	{
+		state->next = controllerHandleNotReadyToSwitchOn;
+	}
+	
+
+	return CONTROLLER_SUCCESS;
+}
+
+eControllerResult_t controllerHandleSwitchOnDisabled(struct state * state)
+{
+	controllerCurrentState = kSwitchOnDisabledState;
+
+	state->next = controllerHandleSwitchOnDisabled;
+
+	return CONTROLLER_SUCCESS;
 }
 

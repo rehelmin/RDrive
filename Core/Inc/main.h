@@ -30,24 +30,26 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 #include "dataDefs.h"
-#include "controller.h"
+#include "FreeRTOS.h"
+#include "queue.h"
 
 #define CONSOLE_QUEUE_MAX_LENGTH  256
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
+/* Data definitions ---------------------------------------------------------*/
 
-typedef struct
-{
-  eControllerState eDataID;
-} ControllerData_t;
+QueueHandle_t consoleQueue;
+QueueHandle_t controllerQueue;
+QueueHandle_t motionQueue;
+QueueHandle_t communicationsQueue;
 
 typedef struct
 {
   ConsoleMessageID_t eDataID;
   ConsoleMessageSource_t eDataSource;
-  char messageBuffer[128];
+  char * messageBuffer;
 } ConsoleData_t;
 
 #ifdef __cplusplus
