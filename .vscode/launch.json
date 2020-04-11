@@ -12,7 +12,7 @@
             "device": "STM32F405RG",
             "interface": "swd",
             "name": "Debug ODrive",
-            "executable": "${workspaceRoot}/build/rocketeer.elf",
+            "executable": "${workspaceRoot}/build/odrivev2.elf",
             "configFiles": [
                 "interface/stlink-v2.cfg",
                 "target/stm32f4x.cfg"
