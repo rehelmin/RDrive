@@ -89,11 +89,9 @@ Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c \
 Middlewares/Third_Party/FreeRTOS/Source/tasks.c \
 Middlewares/Third_Party/FreeRTOS/Source/timers.c \
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c \
-Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c \
 Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c \
-Core/Src/SEGGER/SEGGER_RTT.c \
 Core/Src/SEGGER/SEGGER_RTT_printf.c \
-Core/Src/SEGGER/SEGGER_RTT_Syscalls_GCC.c \
+Core/Src/SEGGER/SEGGER_RTT.c \
 Core/Src/SEGGER/SEGGER_SYSVIEW.c \
 Core/Src/SEGGER/SEGGER_SYSVIEW_FreeRTOS.c \
 Core/Src/SEGGER/Config/SEGGER_SYSVIEW_Config_FreeRTOS.c \
@@ -108,7 +106,8 @@ Core/Src/communication/CO_SDO.c \
 Core/Src/communication/CO_SDOmaster.c \
 Core/Src/communication/CO_SYNC.c \
 Core/Src/communication/CO_trace.c \
-Core/Src/communication/crc16-ccitt.c \
+Core/Src/communication/crc16-ccitt.c\
+Core/Src/heap_useNewlib.c
 
 # ASM sources
 ASM_SOURCES =  \
