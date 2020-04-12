@@ -40,18 +40,18 @@ BUILD_DIR = build
 # C sources
 C_SOURCES =  \
 Core/Src/main.c \
-Core/Src/gpio.c \
+Core/Src/HAL/gpio.c \
 Core/Src/freertos.c \
-Core/Src/i2c.c \
-Core/Src/sdio.c \
-Core/Src/spi.c \
-Core/Src/can.c \
-Core/Src/tim.c \
-Core/Src/usart.c \
-Core/Src/usb_otg.c \
-Core/Src/stm32f4xx_it.c \
-Core/Src/stm32f4xx_hal_msp.c \
-Core/Src/stm32f4xx_hal_timebase_tim.c \
+Core/Src/HAL/i2c.c \
+Core/Src/HAL/sdio.c \
+Core/Src/HAL/spi.c \
+Core/Src/HAL/can.c \
+Core/Src/HAL/tim.c \
+Core/Src/HAL/usart.c \
+Core/Src/HAL/usb_otg.c \
+Core/Src/HAL/stm32f4xx_it.c \
+Core/Src/HAL/stm32f4xx_hal_msp.c \
+Core/Src/HAL/stm32f4xx_hal_timebase_tim.c \
 Core/Src/console.c \
 Core/Src/consoleCommands.c \
 Core/Src/consoleIo.c \
