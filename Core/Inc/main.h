@@ -40,17 +40,10 @@ void Error_Handler(void);
 
 /* Data definitions ---------------------------------------------------------*/
 
-QueueHandle_t consoleQueue;
-QueueHandle_t controllerQueue;
-QueueHandle_t motionQueue;
-QueueHandle_t communicationsQueue;
-
-typedef struct
-{
-  ConsoleMessageID_t eDataID;
-  ConsoleMessageSource_t eDataSource;
-  char * messageBuffer;
-} ConsoleData_t;
+extern QueueHandle_t consoleQueue;
+extern QueueHandle_t controllerQueue;
+extern QueueHandle_t motionQueue;
+extern QueueHandle_t communicationsQueue;
 
 #ifdef __cplusplus
 }

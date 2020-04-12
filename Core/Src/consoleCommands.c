@@ -99,7 +99,7 @@ static eCommandResult_T ConsoleCommandReqState(const char buffer[])
 	ControllerData_t controllerData;
 	uint32_t sendStatus;
 	eCommandResult_T result;
-	result = ConsoleReceiveParamHexUint32(buffer, 1, &controllerData.event);
+	result = ConsoleReceiveParamHexUint32(buffer, 1, (uint32_t*)&controllerData.event);
 	if ( COMMAND_SUCCESS == result )
 	{
 		ConsoleIoSendString("Requesting State: 0x");
@@ -107,6 +107,14 @@ static eCommandResult_T ConsoleCommandReqState(const char buffer[])
 		ConsoleIoSendString(STR_ENDLINE);
 
 		sendStatus = xQueueSend(controllerQueue, (void *) &controllerData, (TickType_t) 0 );
+		if (pdPASS == sendStatus)
+		{
+			result = COMMAND_SUCCESS;
+		}
+		else
+		{
+			result = COMMAND_ERROR;
+		}
 
 
 	}

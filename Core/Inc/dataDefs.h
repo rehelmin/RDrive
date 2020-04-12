@@ -7,20 +7,7 @@ extern "C" {
 
 typedef enum {
   eStateChangeRequest = 0u
-} eControllerMessageID_t;
-
-typedef enum {
-  eDebugMessage = 0u,
-  eInfoMessage = 1u,
-  eWarningMessage = 2u,
-  eErrorMessage = 3u
-} ConsoleMessageID_t;
-
-typedef enum {
-	eController = 0u,
-	eMotion = 1u,
-	eCommunication = 2u
-} ConsoleMessageSource_t;
+} eControllerMessageId_t;
 
 typedef enum {
 	kStartupState = 0x1u,
@@ -44,9 +31,10 @@ typedef enum {
 
 typedef struct
 {
-  eControllerMessageID_t messageId;
+  eControllerMessageId_t messageId;
   eControllerEventId_t event;
 } ControllerData_t;
+
 
 #ifdef __cplusplus
 }

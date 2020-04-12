@@ -60,6 +60,10 @@ const osThreadAttr_t controllerTask_attributes = {
 };
 
 TimerHandle_t ledTimer;
+QueueHandle_t consoleQueue;
+QueueHandle_t controllerQueue;
+QueueHandle_t motionQueue;
+QueueHandle_t communicationsQueue;
 
 state_function controllerHandleStartup;   // initial controller state forward declaration
 
@@ -76,23 +80,12 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   * @retval None
   */
 void MX_FREERTOS_Init(void) {
-  /* USER CODE BEGIN Init */
-       
-  /* USER CODE END Init */
-
-  /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
-
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
 
   /* Blink Timer */
   ledTimer = xTimerCreate("ledBlinkTimer", TIMER_INIT_TICKS, pdTRUE, 0, controllerBlinkLedCallback);
 
   /* Messaging Queues */
-  consoleQueue = xQueueCreate(1, sizeof(ConsoleData_t));
+  consoleQueue = xQueueCreate(4, sizeof(LogData_t));
   controllerQueue = xQueueCreate(4, sizeof(ControllerData_t));
 
   /* Create the thread(s) */
@@ -114,12 +107,18 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartConsoleTask */
 void StartConsoleTask(void *argument)
 {
-  /* Infinite loop */
+  LogData_t receiveMessage;
+  uint32_t receiveStatus;
 
+  /* Infinite loop */
   for(;;)
   {
     ConsoleProcess();
-    osDelay(50);
+    receiveStatus = xQueueReceive(consoleQueue, &receiveMessage, 50);
+    if (pdPASS == receiveStatus)
+    {
+      ConsoleLog(&receiveMessage);
+    }
   }
 }
 
@@ -127,6 +126,8 @@ void StartConsoleTask(void *argument)
 /* USER CODE BEGIN Application */
 void StartCommunicationTask(void *argument)
 {
+
+  Log(eInfo, eCommunication, "Communication task starting up...");
 
   /* Infinite loop */
   for(;;)
@@ -139,6 +140,7 @@ void StartCommunicationTask(void *argument)
 void StartMotionTask(void *argument)
 {
 
+  Log(eInfo, eMotion, "Motion task starting up...");
   /* Infinite loop */
   for(;;)
   {

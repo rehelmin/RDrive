@@ -1,5 +1,6 @@
 #include "main.h"
 #include "controller.h"
+#include "logging.h"
 
 state_function controllerHandleStartup;
 state_function controllerHandleNotReadyToSwitchOn;
@@ -62,10 +63,7 @@ void controllerProcess(struct state * state)
 eControllerResult_t controllerHandleStartup(struct state * state)
 {
 	controllerCurrentState = kStartupState;
-	//ConsoleData_t data;
-	//data.messageBuffer = "Starting up...";
-
-	//xQueueSend(consoleQueue, &data, 10);
+	Log(eInfo, eController, "Controller task starting up...");
 
 	state->next = controllerHandleNotReadyToSwitchOn;
 
@@ -79,6 +77,7 @@ eControllerResult_t controllerHandleNotReadyToSwitchOn(struct state * state)
 	if (kReqSwitchOnDisabled == state->eventId)
 	{
 		state->next = controllerHandleSwitchOnDisabled;
+		Log(eDebug, eController, "Received state change request, moving to Switch On Disabled State");
 	}
 	else
 	{

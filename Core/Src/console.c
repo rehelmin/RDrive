@@ -182,6 +182,42 @@ void ConsoleProcess(void)
 	}
 }
 
+void ConsoleLog(LogData_t * receiveMessage)
+{
+	switch (receiveMessage->levelId) {
+		case eDebug:
+			ConsoleIoSendString("DEBUG ");
+			break;
+		case eInfo:
+			ConsoleIoSendString("INFO ");
+			break;
+		case eWarning:
+			ConsoleIoSendString("WARN ");
+			break;
+		default:
+			break;
+	}
+
+	switch (receiveMessage->source) {
+		case eController:
+			ConsoleIoSendString("(CONTROLLER) ");
+			break;
+		case eMotion:
+			ConsoleIoSendString("(MOTION)     ");
+			break;
+		case eCommunication:
+			ConsoleIoSendString("(COMMS)      ");
+			break;
+		default:
+			break;
+		
+
+	}
+
+	ConsoleIoSendString(receiveMessage->message);
+	ConsoleIoSendString(STR_ENDLINE);
+}
+
 // ConsoleParamFindN
 // Find the start location of the nth parametr in the buffer where the command itself is parameter 0
 static eCommandResult_T ConsoleParamFindN(const char * buffer, const uint8_t parameterNumber, uint32_t *startLocation)

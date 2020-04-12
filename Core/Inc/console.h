@@ -6,6 +6,7 @@
 #define CONSOLE_H
 
 #include <stdint.h>
+#include "logging.h"
 
 // User configuration
 #define CONSOLE_PROMPT			("> ")
@@ -15,6 +16,7 @@
 // Called from higher up areas of the code (main)
 void ConsoleInit(void);
 void ConsoleProcess(void); // call this in a loop
+void ConsoleLog(LogData_t * receiveMessage);
 
 // called from lower down areas of the code (consoleCommands)
 typedef enum { 

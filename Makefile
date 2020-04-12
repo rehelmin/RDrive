@@ -107,7 +107,8 @@ Core/Src/communication/CO_SDOmaster.c \
 Core/Src/communication/CO_SYNC.c \
 Core/Src/communication/CO_trace.c \
 Core/Src/communication/crc16-ccitt.c\
-Core/Src/heap_useNewlib.c
+Core/Src/heap_useNewlib.c \
+Core/Src/logging.c
 
 # ASM sources
 ASM_SOURCES =  \
