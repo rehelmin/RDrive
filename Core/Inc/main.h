@@ -44,7 +44,6 @@ extern QueueHandle_t consoleQueue;
 extern QueueHandle_t controllerQueue;
 extern QueueHandle_t motionQueue;
 extern QueueHandle_t communicationsQueue;
-extern SemaphoreHandle_t consoleSemaphore;
 
 /* Private define ------------------------------------------------------------*/
 #define TIM_1_8_CLOCK_HZ 168000000

@@ -92,7 +92,6 @@ void MX_FREERTOS_Init(void) {
   /* creation of defaultTask */
   consoleTaskHandle = osThreadNew(StartConsoleTask, (void*)consoleQueue, &defaultTask_attributes);
   communicationTaskHandle = osThreadNew(StartCommunicationTask, NULL, &communicationTask_attributes);
-  motionTaskHandle = osThreadNew(StartMotionTask, NULL, &motionTask_attributes);
   controllerTaskHandle = osThreadNew(StartControllerTask, (void*)controllerQueue, &controllerTask_attributes);
 
 
@@ -114,7 +113,7 @@ void StartConsoleTask(void *argument)
   for(;;)
   {
     ConsoleProcess();
-    receiveStatus = xQueueReceive(consoleQueue, &receiveMessage, 50);
+    receiveStatus = xQueueReceive(consoleQueue, &receiveMessage, 100);
     if (pdPASS == receiveStatus)
     {
       ConsoleLog(&receiveMessage);
@@ -134,17 +133,6 @@ void StartCommunicationTask(void *argument)
   {
     CanProcess();
     osDelay(50);
-  }
-}
-
-void StartMotionTask(void *argument)
-{
-
-  Log(eInfo, eMotion, "Motion task starting up...");
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1000);
   }
 }
 

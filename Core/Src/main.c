@@ -101,6 +101,10 @@ int main(void)
   ConsoleInit();
   CO_init(0, 0x10, 1000);
 
+  //Required to use OC4 for ADC triggering.
+  // OC4_PWM_Override(&htim1);
+  // OC4_PWM_Override(&htim8);
+
   /* Init scheduler */
   osKernelInitialize();
 
