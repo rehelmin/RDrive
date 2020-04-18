@@ -26,21 +26,24 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
-/* USER CODE BEGIN Private defines */
-
-/* USER CODE END Private defines */
+#include <stdbool.h>
 
 void MX_GPIO_Init(void);
+void SetGPIO12toUART();
+bool GPIO_subscribe(GPIO_TypeDef* GPIO_port, uint16_t GPIO_pin,
+    uint32_t pull_up_down,
+    void (*callback)(void*), void* ctx);
+void GPIO_unsubscribe(GPIO_TypeDef* GPIO_port, uint16_t GPIO_pin);
+void GPIO_set_to_analog(GPIO_TypeDef* GPIO_port, uint16_t GPIO_pin);
 
-/* USER CODE BEGIN Prototypes */
+uint16_t get_gpio_pin_by_pin(uint16_t GPIO_pin);
+GPIO_TypeDef* get_gpio_port_by_pin(uint16_t GPIO_pin);
 
-/* USER CODE END Prototypes */
-
+#if HW_VERSION_MAJOR == 3 && HW_VERSION_MINOR <= 4
+#define GPIO_COUNT  5
+#else
+#define GPIO_COUNT  8
+#endif
 #ifdef __cplusplus
 }
 #endif

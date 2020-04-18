@@ -38,7 +38,7 @@ int _write(int file, char *data, int len) {
 		return CONSOLE_ERROR;
 	}
 
-	HAL_StatusTypeDef status = HAL_UART_Transmit(&huart3, (uint8_t*)data, len, 1000);
+	HAL_StatusTypeDef status = HAL_UART_Transmit(&huart3, (uint8_t*)data, len, 100);
 
 	return CONSOLE_SUCCESS;
 }
