@@ -2,5 +2,5 @@ power on
 connect
 r
 h
-loadbin build/odrivev2.bin, 0x08000000
+loadbin build/rdrive.bin, 0x08000000
 exit

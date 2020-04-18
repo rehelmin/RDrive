@@ -12,11 +12,12 @@
 
 
 SEGGER := JLinkExe 
+BOARD_VOLTAGE = 48
 
 ######################################
 # target
 ######################################
-TARGET = odrivev2
+TARGET = rdrive
 
 
 ######################################
@@ -175,7 +176,9 @@ C_INCLUDES =  \
 -IMiddlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F \
 -IDrivers/CMSIS/Device/ST/STM32F4xx/Include \
 -IDrivers/CMSIS/Include \
--ICore/Inc/communication
+-ICore/Inc/communication \
+-ICore/Inc/SEGGER \
+-ICore/Inc/HAL
 
 
 # compile gcc flags
@@ -186,6 +189,8 @@ CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-
 ifeq ($(DEBUG), 1)
 CFLAGS += -g -gdwarf-2
 endif
+
+CFLAGS +=-DHW_VERSION_VOLTAGE=$(BOARD_VOLTAGE)
 
 
 # Generate dependency information
