@@ -29,3 +29,29 @@ void Log(LogLevel_t levelId, LogSource_t source, char* message)
 	}
 	
 }
+
+void LogGlobalOff(void)
+{
+	LogGlobal = 0;
+}
+
+void LogGlobalOn(void)
+{
+	LogGlobal = 1;
+}
+
+void LogSetOutputLevel(LogSource_t subsystem, LogLevel_t levelId)
+{
+    if (eController == subsystem)
+    {
+        subsystemSettings.controllerLogLevel = levelId;
+    }
+    else if (eMotion == subsystem)
+    {
+        subsystemSettings.motionLogLevel = levelId;
+    }
+    else if (eCommunication == subsystem)
+    {
+        subsystemSettings.communicationLogLevel = levelId;
+    }
+}
